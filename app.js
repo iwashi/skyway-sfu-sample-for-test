@@ -1,8 +1,8 @@
-async function sleep() {
+async function sleep(sleep = 7000) {
   return new Promise((resolve)  => {
     setTimeout(() => {
       resolve();
-    }, 7000);
+    }, sleep);
   });
 }
 
@@ -14,18 +14,17 @@ async function sleep() {
   });
 
   // To wait server process
-  await sleep();
+  await sleep(3000);
 
   // Video
   const localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
   const vidElem = document.getElementById('my-video');
   vidElem.srcObject = localStream;
 
+  await sleep(Math.random() * 5000 + 2000);
   const room = peer.joinRoom('sfu_sample_' + location.hash, {mode: 'sfu', stream: localStream});
 
   // For DeBuGGing
-  await sleep();
-
   const videoContainer = document.getElementById('flex-container');
 
   room.on('stream', stream => {
