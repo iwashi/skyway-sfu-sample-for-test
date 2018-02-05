@@ -2,7 +2,7 @@ async function sleep() {
   return new Promise((resolve)  => {
     setTimeout(() => {
       resolve();
-    }, 1000);
+    }, 7000);
   });
 }
 
@@ -22,6 +22,9 @@ async function sleep() {
   vidElem.srcObject = localStream;
 
   const room = peer.joinRoom('sfu_sample_' + location.hash, {mode: 'sfu', stream: localStream});
+
+  // For DeBuGGing
+  await sleep();
 
   const videoContainer = document.getElementById('flex-container');
 
