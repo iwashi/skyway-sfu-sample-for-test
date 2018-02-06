@@ -9,7 +9,7 @@ async function sleep(sleep = 7000) {
 (async () => {
   // Peerの準備
   const peer = new Peer({
-    key:   'e5eaf3a1-59bf-4606-ad5f-b1c4c8f51984',
+    key:   '82105c92-02ed-4233-b7d9-f23e68a864e2',
     debug: 3,
   });
 
