@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 36);
+/******/ 	return __webpack_require__(__webpack_require__.s = 37);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -108,7 +108,7 @@ module.exports = g;
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(37);
+module.exports = __webpack_require__(38);
 
 
 /***/ }),
@@ -301,7 +301,7 @@ function localstorage() {
   } catch (e) {}
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(44)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)))
 
 /***/ }),
 /* 3 */
@@ -624,7 +624,7 @@ Emitter.prototype.hasListeners = function(event){
  */
 
 var keys = __webpack_require__(53);
-var hasBinary = __webpack_require__(18);
+var hasBinary = __webpack_require__(19);
 var sliceBuffer = __webpack_require__(54);
 var after = __webpack_require__(55);
 var utf8 = __webpack_require__(56);
@@ -1538,6 +1538,159 @@ function isUndefined(arg) {
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _detectBrowser = __webpack_require__(77);
+
+/**
+ * Validate the Peer ID format.
+ * @param {string} [id] - A Peer ID.
+ * @return {boolean} True if the peerId format is valid. False if not.
+ */
+function validateId(id) {
+  // Allow empty ids
+  return !id || /^[A-Za-z0-9_-]+(?:[ _-][A-Za-z0-9]+)*$/.exec(id);
+}
+
+/**
+ * Validate the API key.
+ * @param {string} [key] A SkyWay API key.
+ * @return {boolean} True if the API key format is valid. False if not.
+ */
+function validateKey(key) {
+  // Allow empty keys
+  return !key || /^[a-z0-9]{8}(-[a-z0-9]{4}){3}-[a-z0-9]{12}$/.exec(key);
+}
+
+/**
+ * Return random ID.
+ * @return {string} A text consisting of 16 chars.
+ */
+function randomId() {
+  var keyLength = 16;
+  // '36' means that we want to convert the number to a string using chars in
+  // the range of '0-9a-z'. The concatenated 0's are for padding the key,
+  // as Math.random() may produce a key shorter than 16 chars in length
+  var randString = Math.random().toString(36) + '0000000000000000000';
+  return randString.substr(2, keyLength);
+}
+
+/**
+ * Generate random token.
+ * @return {string} A token consisting of random alphabet and integer.
+ */
+function randomToken() {
+  return Math.random().toString(36).substr(2);
+}
+
+/**
+ * Combine the sliced ArrayBuffers.
+ * @param {Array} buffers - An Array of ArrayBuffer.
+ * @return {ArrayBuffer} The combined ArrayBuffer.
+ */
+function joinArrayBuffers(buffers) {
+  var size = buffers.reduce(function (sum, buffer) {
+    return sum + buffer.byteLength;
+  }, 0);
+  var tmpArray = new Uint8Array(size);
+  var currPos = 0;
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = buffers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var buffer = _step.value;
+
+      tmpArray.set(new Uint8Array(buffer), currPos);
+      currPos += buffer.byteLength;
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+
+  return tmpArray.buffer;
+}
+
+/**
+ * Convert Blob to ArrayBuffer.
+ * @param {Blob} blob - The Blob to be read as ArrayBuffer.
+ * @param {Function} cb - Callback function that called after load event fired.
+ */
+function blobToArrayBuffer(blob, cb) {
+  var fr = new FileReader();
+  fr.onload = function (event) {
+    cb(event.target.result);
+  };
+  fr.readAsArrayBuffer(blob);
+}
+
+/**
+ * Whether the protocol is https or not.
+ * @return {boolean} Whether the protocol is https or not.
+ */
+function isSecure() {
+  return location.protocol === 'https:';
+}
+
+/**
+ * Detect browser name and version.
+ * @return {Object} Browser name and major, minor and patch versions. Object is empty if info can't be obtained.
+ */
+function detectBrowser() {
+  var _detect = (0, _detectBrowser.detect)(),
+      name = _detect.name,
+      version = _detect.version;
+
+  var _version$split$map = version.split('.').map(function (i) {
+    return parseInt(i);
+  }),
+      _version$split$map2 = _slicedToArray(_version$split$map, 3),
+      major = _version$split$map2[0],
+      minor = _version$split$map2[1],
+      patch = _version$split$map2[2];
+
+  return {
+    name: name,
+    major: major,
+    minor: minor,
+    patch: patch
+  };
+}
+
+exports.default = {
+  validateId: validateId,
+  validateKey: validateKey,
+  randomId: randomId,
+  randomToken: randomToken,
+  joinArrayBuffers: joinArrayBuffers,
+  blobToArrayBuffer: blobToArrayBuffer,
+  isSecure: isSecure,
+  detectBrowser: detectBrowser
+};
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports) {
 
 /**
@@ -1580,7 +1733,7 @@ exports.decode = function(qs){
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 
@@ -1592,7 +1745,7 @@ module.exports = function(a, b){
 };
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1663,7 +1816,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1683,11 +1836,11 @@ var _enum = __webpack_require__(1);
 
 var _enum2 = _interopRequireDefault(_enum);
 
-var _negotiator = __webpack_require__(11);
+var _negotiator = __webpack_require__(12);
 
 var _negotiator2 = _interopRequireDefault(_negotiator);
 
-var _util = __webpack_require__(12);
+var _util = __webpack_require__(7);
 
 var _util2 = _interopRequireDefault(_util);
 
@@ -1695,7 +1848,7 @@ var _logger = __webpack_require__(3);
 
 var _logger2 = _interopRequireDefault(_logger);
 
-var _config = __webpack_require__(9);
+var _config = __webpack_require__(10);
 
 var _config2 = _interopRequireDefault(_config);
 
@@ -1787,6 +1940,7 @@ var Connection = function (_EventEmitter) {
     value: function handleAnswer(answerMessage) {
       if (this._pcAvailable) {
         this._negotiator.handleAnswer(answerMessage.answer);
+        this._negotiator.setRemoteBrowser(answerMessage.browser);
         this.open = true;
       } else {
         _logger2.default.log('Queuing ANSWER message in ' + this.id + ' from ' + this.remoteId);
@@ -1903,12 +2057,14 @@ var Connection = function (_EventEmitter) {
     value: function _setupNegotiatorMessageHandlers() {
       var _this2 = this;
 
+      var browserInfo = _util2.default.detectBrowser();
       this._negotiator.on(_negotiator2.default.EVENTS.answerCreated.key, function (answer) {
         var connectionAnswer = {
           answer: answer,
           dst: _this2.remoteId,
           connectionId: _this2.id,
-          connectionType: _this2.type
+          connectionType: _this2.type,
+          browser: browserInfo
         };
         _this2.emit(Connection.EVENTS.answer.key, connectionAnswer);
       });
@@ -1919,7 +2075,8 @@ var Connection = function (_EventEmitter) {
           dst: _this2.remoteId,
           connectionId: _this2.id,
           connectionType: _this2.type,
-          metadata: _this2.metadata
+          metadata: _this2.metadata,
+          browser: browserInfo
         };
         if (_this2.serialization) {
           connectionOffer.serialization = _this2.serialization;
@@ -2025,7 +2182,7 @@ var Connection = function (_EventEmitter) {
 exports.default = Connection;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2045,13 +2202,17 @@ var _enum = __webpack_require__(1);
 
 var _enum2 = _interopRequireDefault(_enum);
 
-var _sdpUtil = __webpack_require__(29);
+var _sdpUtil = __webpack_require__(30);
 
 var _sdpUtil2 = _interopRequireDefault(_sdpUtil);
 
 var _logger = __webpack_require__(3);
 
 var _logger2 = _interopRequireDefault(_logger);
+
+var _util = __webpack_require__(7);
+
+var _util2 = _interopRequireDefault(_util);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2080,8 +2241,10 @@ var Negotiator = function (_EventEmitter) {
 
     var _this2 = _possibleConstructorReturn(this, (Negotiator.__proto__ || Object.getPrototypeOf(Negotiator)).call(this));
 
+    _this2._offerQueue = [];
     _this2._isExpectingAnswer = false;
     _this2._replaceStreamCalled = false;
+    _this2._isNegotiationAllowed = true;
     return _this2;
   }
 
@@ -2122,12 +2285,11 @@ var Negotiator = function (_EventEmitter) {
       this._videoCodec = options.videoCodec;
       this._type = options.type;
       this._recvonlyState = this._getReceiveOnlyState(options);
+      this._remoteBrowser = {};
 
       if (this._type === 'media') {
         if (options.stream) {
-          // To check Chrome M64 or not. This is a tentative fix.
-          // M65 should be handled soon because it implements replaceTrack.
-          if (this._isAddTrackAvailable && this._isReplaceTrackAvailable) {
+          if (this._isAddTrackAvailable && !this._isForceUseStreamMethods) {
             options.stream.getTracks().forEach(function (track) {
               _this3._pc.addTrack(track, options.stream);
             });
@@ -2153,6 +2315,11 @@ var Negotiator = function (_EventEmitter) {
         this.handleOffer(options.offer);
       }
     }
+  }, {
+    key: 'setRemoteBrowser',
+    value: function setRemoteBrowser(browser) {
+      this._remoteBrowser = browser;
+    }
 
     /**
      * Replace the stream being sent with a new one.
@@ -2164,17 +2331,19 @@ var Negotiator = function (_EventEmitter) {
     value: function replaceStream(newStream) {
       // If negotiator is null
       // or replaceStream was called but `onnegotiationneeded` event has not finished yet.
-      if (!this._pc || this._replaceStreamCalled) {
+      if (!this._pc) {
         return;
       }
 
+      this._isNegotiationAllowed = true;
+
       // Replace the tracks in the rtpSenders if possible.
       // This doesn't require renegotiation.
-      // Firefox 53 has both getSenders and getLocalStreams,
-      // but Google Chrome 61 has only getLocalStreams.
-      if (this._isRtpSenderAvailable && this._isReplaceTrackAvailable) {
+      if (this._isRtpSenderAvailable && !this._isForceUseStreamMethods) {
         this._replacePerTrack(newStream);
-      } else {
+      } else if (!this._replaceStreamCalled) {
+        // _replacePerStream is used for Chrome 64 and below. All other browsers should have track methods implemented.
+        // We can delete _replacePerStream after Chrome 64 is no longer supported.
         this._replacePerStream(newStream);
       }
     }
@@ -2194,16 +2363,27 @@ var Negotiator = function (_EventEmitter) {
         return;
       }
 
+      this._isNegotiationAllowed = true;
+
       if (!offerSdp) {
         offerSdp = this._lastOffer;
       }
 
       this._lastOffer = offerSdp;
 
+      // Enqueue and skip while signalingState is wrong state.
+      // (when room is SFU and there are multiple conns in a same time, it happens)
+      if (this._pc.signalingState === 'have-remote-offer') {
+        this._offerQueue.push(offerSdp);
+        return;
+      }
+
       this._setRemoteDescription(offerSdp).then(function () {
         return _this4._makeAnswerSdp();
       }).then(function (answer) {
         _this4.emit(Negotiator.EVENTS.answerCreated.key, answer);
+      }).catch(function (err) {
+        _logger2.default.error(err);
       });
     }
 
@@ -2215,6 +2395,8 @@ var Negotiator = function (_EventEmitter) {
   }, {
     key: 'handleAnswer',
     value: function handleAnswer(answerSdp) {
+      this._isNegotiationAllowed = true;
+
       if (this._isExpectingAnswer) {
         this._setRemoteDescription(answerSdp);
         this._isExpectingAnswer = false;
@@ -2268,8 +2450,12 @@ var Negotiator = function (_EventEmitter) {
       this._isAddTrackAvailable = typeof RTCPeerConnection.prototype.addTrack === 'function';
       this._isOnTrackAvailable = 'ontrack' in RTCPeerConnection.prototype;
       this._isRtpSenderAvailable = typeof RTCPeerConnection.prototype.getSenders === 'function';
-      this._isReplaceTrackAvailable = window.RTCRtpSender && typeof RTCRtpSender.prototype.replaceTrack === 'function';
       this._isAddTransceiverAvailable = typeof RTCPeerConnection.prototype.addTransceiver === 'function';
+
+      // If browser is Chrome 64, we use addStream/replaceStream instead of addTrack/replaceTrack.
+      // Because Chrome can't call properly to Firefox using track methods.
+      var browserInfo = _util2.default.detectBrowser();
+      this._isForceUseStreamMethods = browserInfo.name === 'chrome' && browserInfo.major <= 64;
 
       // Calling RTCPeerConnection with an empty object causes an error
       // Either give it a proper pcConfig or undefined
@@ -2287,9 +2473,7 @@ var Negotiator = function (_EventEmitter) {
       var _this5 = this;
 
       var pc = this._pc;
-      // To check Chrome M64 or not. This is a tentative fix.
-      // M65 should be handled soon because it implements replaceTrack.
-      if (this._isOnTrackAvailable && this._isReplaceTrackAvailable) {
+      if (this._isOnTrackAvailable && !this._isForceUseStreamMethods) {
         pc.ontrack = function (evt) {
           _logger2.default.log('Received remote media stream');
           evt.streams.forEach(function (stream) {
@@ -2350,8 +2534,10 @@ var Negotiator = function (_EventEmitter) {
       pc.onnegotiationneeded = function () {
         _logger2.default.log('`negotiationneeded` triggered');
 
-        // Don't make a new offer if it's not stable.
-        if (pc.signalingState === 'stable') {
+        // Don't make a new offer if it's not stable or if onnegotiationneeded is called consecutively.
+        // Chrome 65 called onnegotiationneeded once per addTrack so force it to run only once.
+        if (pc.signalingState === 'stable' && _this5._isNegotiationAllowed) {
+          _this5._isNegotiationAllowed = false;
           // Emit negotiationNeeded event in case additional handling is needed.
           if (_this5._originator) {
             _this5._makeOfferSdp().then(function (offer) {
@@ -2373,6 +2559,18 @@ var Negotiator = function (_EventEmitter) {
 
       pc.onsignalingstatechange = function () {
         _logger2.default.log('signalingState is ' + pc.signalingState);
+
+        // After signaling state is getting back to 'stable',
+        // apply pended remote offer, which was stored when simultaneous multiple conns happened in SFU room,
+        // Note that this code very rarely applies the old remote offer.
+        // E.g. "Offer A -> Offer B" should be the right order but for some reason like NW unstablity,
+        //      offerQueue might keep "Offer B" first and handle "Offer A" later.
+        if (pc.signalingState === 'stable') {
+          var offer = _this5._offerQueue.shift();
+          if (offer) {
+            _this5.handleOffer(offer);
+          }
+        }
       };
     }
 
@@ -2395,8 +2593,8 @@ var Negotiator = function (_EventEmitter) {
         // MediaConnection
       } else {
         if (this._isAddTransceiverAvailable) {
-          this._recvonlyState.audio && this._pc.addTransceiver('audio').setDirection('recvonly');
-          this._recvonlyState.video && this._pc.addTransceiver('video').setDirection('recvonly');
+          this._recvonlyState.audio && this._pc.addTransceiver('audio', { direction: 'recvonly' });
+          this._recvonlyState.video && this._pc.addTransceiver('video', { direction: 'recvonly' });
           createOfferPromise = this._pc.createOffer();
         } else {
           var offerOptions = {};
@@ -2611,13 +2809,6 @@ var Negotiator = function (_EventEmitter) {
       _updateSenderWithTrack(vSender, vTracks[0], newStream);
       _updateSenderWithTrack(aSender, aTracks[0], newStream);
 
-      this._replaceStreamCalled = true;
-
-      // We don't actually need to do renegotiation but force it in order to prevent
-      // problems with the stream.id being mismatched when renegotiation happens anyways
-      // Firefox 55 doesn't trigger onnegotiationneeded event when a track in a stream is removed
-      this._pc.onnegotiationneeded();
-
       /**
        * Replace a track being sent with a new one.
        * @param {RTCRtpSender} sender - The sender which type is video or audio.
@@ -2662,9 +2853,6 @@ var Negotiator = function (_EventEmitter) {
 
       var localStreams = this._pc.getLocalStreams();
 
-      // Temporarily unset onnegotiationneeded so that it doesn't do anything.
-      // Leaving this set will cause an extra negotiation on removeStream that will cause the
-      // signalingState on the answer side to enter an unexpected state, leading to errors.
       var origOnNegotiationNeeded = this._pc.onnegotiationneeded;
       this._pc.onnegotiationneeded = function () {};
 
@@ -2673,13 +2861,49 @@ var Negotiator = function (_EventEmitter) {
         this._pc.removeStream(localStreams[0]);
       }
 
-      this._replaceStreamCalled = true;
+      // HACK: For some reason FF59 doesn't work when Chrome 64 renegotiates after updating the stream.
+      // However, simply updating the localDescription updates the remote stream if the other browser is firefox 59+.
+      // Chrome 64 probably uses replaceTrack-like functions internally.
+      var isRemoteBrowserNeedRenegotiation = this._remoteBrowser && this._remoteBrowser.name === 'firefox' && this._remoteBrowser.major >= 59;
+      if (isRemoteBrowserNeedRenegotiation) {
+        this._pc.addStream(newStream);
 
-      // a chance to trigger (and do nothing) on removeStream.
-      setTimeout(function () {
-        _this10._pc.addStream(newStream);
-        _this10._pc.onnegotiationneeded = origOnNegotiationNeeded;
-      });
+        // use setTimeout to trigger (and do nothing) on add/removeStream.
+        setTimeout(function () {
+          // update the localDescription with the new stream information (after getting to the right state)
+          var promise = void 0;
+          if (_this10._originator) {
+            promise = _this10._makeOfferSdp().then(function (offer) {
+              return _this10._pc.setLocalDescription(offer);
+            }).then(function () {
+              return _this10._pc.setRemoteDescription(_this10._pc.remoteDescription);
+            });
+          } else {
+            promise = _this10._pc.setRemoteDescription(_this10._pc.remoteDescription).then(function () {
+              return _this10._pc.createAnswer();
+            }).then(function (answer) {
+              return _this10._pc.setLocalDescription(answer);
+            });
+          }
+          // restore onnegotiationneeded in case we need it later.
+          promise.then(function () {
+            _this10._pc.onnegotiationneeded = origOnNegotiationNeeded;
+          }).catch(function (err) {
+            _logger2.default.error(err);
+            _this10._pc.onnegotiationneeded = origOnNegotiationNeeded;
+          });
+        });
+      } else {
+        // this is the normal flow where we renegotiate.
+        this._replaceStreamCalled = true;
+
+        // use setTimeout to trigger (and do nothing) on removeStream.
+        setTimeout(function () {
+          // onnegotiationneeded will be triggered by addStream.
+          _this10._pc.addStream(newStream);
+          _this10._pc.onnegotiationneeded = origOnNegotiationNeeded;
+        });
+      }
     }
 
     /**
@@ -2762,150 +2986,6 @@ var Negotiator = function (_EventEmitter) {
 exports.default = Negotiator;
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-/**
- * Validate the Peer ID format.
- * @param {string} [id] - A Peer ID.
- * @return {boolean} True if the peerId format is valid. False if not.
- */
-function validateId(id) {
-  // Allow empty ids
-  return !id || /^[A-Za-z0-9_-]+(?:[ _-][A-Za-z0-9]+)*$/.exec(id);
-}
-
-/**
- * Validate the API key.
- * @param {string} [key] A SkyWay API key.
- * @return {boolean} True if the API key format is valid. False if not.
- */
-function validateKey(key) {
-  // Allow empty keys
-  return !key || /^[a-z0-9]{8}(-[a-z0-9]{4}){3}-[a-z0-9]{12}$/.exec(key);
-}
-
-/**
- * Return random ID.
- * @return {string} A text consisting of 16 chars.
- */
-function randomId() {
-  var keyLength = 16;
-  // '36' means that we want to convert the number to a string using chars in
-  // the range of '0-9a-z'. The concatenated 0's are for padding the key,
-  // as Math.random() may produce a key shorter than 16 chars in length
-  var randString = Math.random().toString(36) + '0000000000000000000';
-  return randString.substr(2, keyLength);
-}
-
-/**
- * Generate random token.
- * @return {string} A token consisting of random alphabet and integer.
- */
-function randomToken() {
-  return Math.random().toString(36).substr(2);
-}
-
-/**
- * Combine the sliced ArrayBuffers.
- * @param {Array} buffers - An Array of ArrayBuffer.
- * @return {ArrayBuffer} The combined ArrayBuffer.
- */
-function joinArrayBuffers(buffers) {
-  var size = buffers.reduce(function (sum, buffer) {
-    return sum + buffer.byteLength;
-  }, 0);
-  var tmpArray = new Uint8Array(size);
-  var currPos = 0;
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
-
-  try {
-    for (var _iterator = buffers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var buffer = _step.value;
-
-      tmpArray.set(new Uint8Array(buffer), currPos);
-      currPos += buffer.byteLength;
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator.return) {
-        _iterator.return();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
-    }
-  }
-
-  return tmpArray.buffer;
-}
-
-/**
- * Convert Blob to ArrayBuffer.
- * @param {Blob} blob - The Blob to be read as ArrayBuffer.
- * @param {Function} cb - Callback function that called after load event fired.
- */
-function blobToArrayBuffer(blob, cb) {
-  var fr = new FileReader();
-  fr.onload = function (event) {
-    cb(event.target.result);
-  };
-  fr.readAsArrayBuffer(blob);
-}
-
-/**
- * Whether the protocol is https or not.
- * @return {boolean} Whether the protocol is https or not.
- */
-function isSecure() {
-  return location.protocol === 'https:';
-}
-
-/**
- * Detect browser.
- * @return {string} Browser name or empty string for not supported.
- */
-function detectBrowser() {
-  var ua = navigator.userAgent;
-
-  switch (true) {
-    case /Edge/.test(ua):
-      return 'edge';
-    case /Chrome/.test(ua):
-      return 'chrome';
-    case /Firefox/.test(ua):
-      return 'firefox';
-    case /Safari\//.test(ua):
-      return 'safari';
-    default:
-      return '';
-  }
-}
-
-exports.default = {
-  validateId: validateId,
-  validateKey: validateKey,
-  randomId: randomId,
-  randomToken: randomToken,
-  joinArrayBuffers: joinArrayBuffers,
-  blobToArrayBuffer: blobToArrayBuffer,
-  isSecure: isSecure,
-  detectBrowser: detectBrowser
-};
-
-/***/ }),
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2916,9 +2996,9 @@ exports.default = {
 
 var debug = __webpack_require__(2)('socket.io-parser');
 var Emitter = __webpack_require__(4);
-var hasBin = __webpack_require__(18);
+var hasBin = __webpack_require__(19);
 var binary = __webpack_require__(47);
-var isBuf = __webpack_require__(20);
+var isBuf = __webpack_require__(21);
 
 /**
  * Protocol version.
@@ -3586,6 +3666,196 @@ module.exports = function parseuri(str) {
 
 /***/ }),
 /* 18 */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/* global Blob File */
@@ -3594,7 +3864,7 @@ module.exports = function parseuri(str) {
  * Module requirements.
  */
 
-var isArray = __webpack_require__(19);
+var isArray = __webpack_require__(20);
 
 var toString = Object.prototype.toString;
 var withNativeBlob = typeof global.Blob === 'function' || toString.call(global.Blob) === '[object BlobConstructor]';
@@ -3654,7 +3924,7 @@ function hasBinary (obj) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -3665,7 +3935,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -3685,7 +3955,7 @@ function isBuf(obj) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -3694,13 +3964,13 @@ function isBuf(obj) {
  */
 
 var eio = __webpack_require__(48);
-var Socket = __webpack_require__(26);
+var Socket = __webpack_require__(27);
 var Emitter = __webpack_require__(4);
 var parser = __webpack_require__(13);
-var on = __webpack_require__(27);
-var bind = __webpack_require__(28);
+var on = __webpack_require__(28);
+var bind = __webpack_require__(29);
 var debug = __webpack_require__(2)('socket.io-client:manager');
-var indexOf = __webpack_require__(25);
+var indexOf = __webpack_require__(26);
 var Backoff = __webpack_require__(65);
 
 /**
@@ -4264,7 +4534,7 @@ Manager.prototype.onreconnect = function () {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -4324,7 +4594,7 @@ function polling (opts) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -4332,10 +4602,10 @@ function polling (opts) {
  */
 
 var Transport = __webpack_require__(15);
-var parseqs = __webpack_require__(7);
+var parseqs = __webpack_require__(8);
 var parser = __webpack_require__(5);
-var inherit = __webpack_require__(8);
-var yeast = __webpack_require__(24);
+var inherit = __webpack_require__(9);
+var yeast = __webpack_require__(25);
 var debug = __webpack_require__(2)('engine.io-client:polling');
 
 /**
@@ -4575,7 +4845,7 @@ Polling.prototype.uri = function () {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4650,7 +4920,7 @@ module.exports = yeast;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 
@@ -4665,7 +4935,7 @@ module.exports = function(arr, obj){
 };
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -4676,10 +4946,10 @@ module.exports = function(arr, obj){
 var parser = __webpack_require__(13);
 var Emitter = __webpack_require__(4);
 var toArray = __webpack_require__(64);
-var on = __webpack_require__(27);
-var bind = __webpack_require__(28);
+var on = __webpack_require__(28);
+var bind = __webpack_require__(29);
 var debug = __webpack_require__(2)('socket.io-client:socket');
-var parseqs = __webpack_require__(7);
+var parseqs = __webpack_require__(8);
 
 /**
  * Module exports.
@@ -5089,7 +5359,7 @@ Socket.prototype.compress = function (compress) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports) {
 
 
@@ -5119,7 +5389,7 @@ function on (obj, ev, fn) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports) {
 
 /**
@@ -5148,7 +5418,7 @@ module.exports = function(obj, fn){
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5160,11 +5430,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _sdpTransform = __webpack_require__(30);
+var _sdpTransform = __webpack_require__(31);
 
 var _sdpTransform2 = _interopRequireDefault(_sdpTransform);
 
-var _sdpInterop = __webpack_require__(72);
+var _sdpInterop = __webpack_require__(73);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5384,11 +5654,11 @@ var SdpUtil = function () {
 exports.default = new SdpUtil();
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parser = __webpack_require__(70);
-var writer = __webpack_require__(71);
+var parser = __webpack_require__(71);
+var writer = __webpack_require__(72);
 
 exports.write = writer;
 exports.parse = parser.parse;
@@ -5401,7 +5671,7 @@ exports.parseSimulcastStreamList = parser.parseSimulcastStreamList;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports) {
 
 var grammar = module.exports = {
@@ -5747,7 +6017,7 @@ Object.keys(grammar).forEach(function (key) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5761,7 +6031,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _jsBinarypack = __webpack_require__(76);
+var _jsBinarypack = __webpack_require__(79);
 
 var _jsBinarypack2 = _interopRequireDefault(_jsBinarypack);
 
@@ -5769,19 +6039,19 @@ var _enum = __webpack_require__(1);
 
 var _enum2 = _interopRequireDefault(_enum);
 
-var _objectSizeof = __webpack_require__(77);
+var _objectSizeof = __webpack_require__(80);
 
 var _objectSizeof2 = _interopRequireDefault(_objectSizeof);
 
-var _negotiator = __webpack_require__(11);
+var _negotiator = __webpack_require__(12);
 
 var _negotiator2 = _interopRequireDefault(_negotiator);
 
-var _connection = __webpack_require__(10);
+var _connection = __webpack_require__(11);
 
 var _connection2 = _interopRequireDefault(_connection);
 
-var _util = __webpack_require__(12);
+var _util = __webpack_require__(7);
 
 var _util2 = _interopRequireDefault(_util);
 
@@ -5789,7 +6059,7 @@ var _logger = __webpack_require__(3);
 
 var _logger2 = _interopRequireDefault(_logger);
 
-var _config = __webpack_require__(9);
+var _config = __webpack_require__(10);
 
 var _config2 = _interopRequireDefault(_config);
 
@@ -6190,7 +6460,7 @@ var DataConnection = function (_Connection) {
 exports.default = DataConnection;
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
 var binaryFeatures = {};
@@ -6260,7 +6530,7 @@ module.exports.BufferBuilder = BufferBuilder;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6278,11 +6548,11 @@ var _enum = __webpack_require__(1);
 
 var _enum2 = _interopRequireDefault(_enum);
 
-var _negotiator = __webpack_require__(11);
+var _negotiator = __webpack_require__(12);
 
 var _negotiator2 = _interopRequireDefault(_negotiator);
 
-var _connection = __webpack_require__(10);
+var _connection = __webpack_require__(11);
 
 var _connection2 = _interopRequireDefault(_connection);
 
@@ -6404,6 +6674,7 @@ var MediaConnection = function (_Connection) {
         videoReceiveEnabled: options.videoReceiveEnabled,
         audioReceiveEnabled: options.audioReceiveEnabled
       });
+      this._negotiator.setRemoteBrowser(this._options.payload.browser);
       this._pcAvailable = true;
 
       this._handleQueuedMessages();
@@ -6491,7 +6762,7 @@ var MediaConnection = function (_Connection) {
 exports.default = MediaConnection;
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6755,7 +7026,7 @@ var Room = function (_EventEmitter) {
 exports.default = Room;
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6777,31 +7048,31 @@ var _enum = __webpack_require__(1);
 
 var _enum2 = _interopRequireDefault(_enum);
 
-var _socket = __webpack_require__(41);
+var _socket = __webpack_require__(42);
 
 var _socket2 = _interopRequireDefault(_socket);
 
-var _connection = __webpack_require__(10);
+var _connection = __webpack_require__(11);
 
 var _connection2 = _interopRequireDefault(_connection);
 
-var _dataConnection = __webpack_require__(32);
+var _dataConnection = __webpack_require__(33);
 
 var _dataConnection2 = _interopRequireDefault(_dataConnection);
 
-var _mediaConnection = __webpack_require__(34);
+var _mediaConnection = __webpack_require__(35);
 
 var _mediaConnection2 = _interopRequireDefault(_mediaConnection);
 
-var _sfuRoom = __webpack_require__(83);
+var _sfuRoom = __webpack_require__(86);
 
 var _sfuRoom2 = _interopRequireDefault(_sfuRoom);
 
-var _meshRoom = __webpack_require__(84);
+var _meshRoom = __webpack_require__(87);
 
 var _meshRoom2 = _interopRequireDefault(_meshRoom);
 
-var _util = __webpack_require__(12);
+var _util = __webpack_require__(7);
 
 var _util2 = _interopRequireDefault(_util);
 
@@ -6809,7 +7080,7 @@ var _logger = __webpack_require__(3);
 
 var _logger2 = _interopRequireDefault(_logger);
 
-var _config = __webpack_require__(9);
+var _config = __webpack_require__(10);
 
 var _config2 = _interopRequireDefault(_config);
 
@@ -7344,7 +7615,8 @@ var Peer = function (_EventEmitter) {
           var turnCombinations = [{ protocol: 'turn', transport: 'tcp' }, { protocol: 'turn', transport: 'udp' }];
 
           // Edge can not handle turns-tcp
-          if (_util2.default.detectBrowser() !== 'edge') {
+          var browser = _util2.default.detectBrowser();
+          if (browser.name !== 'edge') {
             turnCombinations.push({ protocol: 'turns', transport: 'tcp' });
           }
 
@@ -7852,7 +8124,7 @@ exports.default = Peer;
 module.exports = Peer;
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7862,13 +8134,13 @@ var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["defau
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
-var EnumItem = _interopRequire(__webpack_require__(38));
+var EnumItem = _interopRequire(__webpack_require__(39));
 
 var isString = __webpack_require__(16).isString;
 
-var indexOf = __webpack_require__(39).indexOf;
+var indexOf = __webpack_require__(40).indexOf;
 
-var isBuffer = _interopRequire(__webpack_require__(40));
+var isBuffer = _interopRequire(__webpack_require__(41));
 
 var endianness = "LE"; // for react-native
 
@@ -8196,7 +8468,7 @@ function guardReservedKeys(customName, key) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8306,7 +8578,7 @@ var EnumItem = (function () {
 module.exports = EnumItem;
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8323,7 +8595,7 @@ var indexOf = Array.prototype.indexOf || function (find, i /*opt*/) {
 exports.indexOf = indexOf;
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports) {
 
 /*!
@@ -8350,7 +8622,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8362,7 +8634,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _socket = __webpack_require__(42);
+var _socket = __webpack_require__(43);
 
 var _socket2 = _interopRequireDefault(_socket);
 
@@ -8374,13 +8646,15 @@ var _queryString = __webpack_require__(66);
 
 var _queryString2 = _interopRequireDefault(_queryString);
 
-var _config = __webpack_require__(9);
+var _config = __webpack_require__(10);
 
 var _config2 = _interopRequireDefault(_config);
 
 var _logger = __webpack_require__(3);
 
 var _logger2 = _interopRequireDefault(_logger);
+
+var _package = __webpack_require__(70);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8459,7 +8733,8 @@ var Socket = function (_EventEmitter) {
     value: function start(id, token, credential) {
       var _this2 = this;
 
-      var query = 'apiKey=' + this._key + '&token=' + token;
+      var query = 'apiKey=' + this._key + '&token=' + token + ('&platform=javascript&sdk_version=' + _package.version);
+
       if (id) {
         query += '&peerId=' + id;
         this._isPeerIdSet = true;
@@ -8900,7 +9175,7 @@ var Socket = function (_EventEmitter) {
 exports.default = Socket;
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -8908,9 +9183,9 @@ exports.default = Socket;
  * Module dependencies.
  */
 
-var url = __webpack_require__(43);
+var url = __webpack_require__(44);
 var parser = __webpack_require__(13);
-var Manager = __webpack_require__(21);
+var Manager = __webpack_require__(22);
 var debug = __webpack_require__(2)('socket.io-client');
 
 /**
@@ -8995,12 +9270,12 @@ exports.connect = lookup;
  * @api public
  */
 
-exports.Manager = __webpack_require__(21);
-exports.Socket = __webpack_require__(26);
+exports.Manager = __webpack_require__(22);
+exports.Socket = __webpack_require__(27);
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -9080,196 +9355,6 @@ function url (uri, loc) {
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
 
 /***/ }),
 /* 45 */
@@ -9647,8 +9732,8 @@ function plural(ms, n, name) {
  * Module requirements
  */
 
-var isArray = __webpack_require__(19);
-var isBuf = __webpack_require__(20);
+var isArray = __webpack_require__(20);
+var isBuf = __webpack_require__(21);
 var toString = Object.prototype.toString;
 var withNativeBlob = typeof global.Blob === 'function' || toString.call(global.Blob) === '[object BlobConstructor]';
 var withNativeFile = typeof global.File === 'function' || toString.call(global.File) === '[object FileConstructor]';
@@ -9817,14 +9902,14 @@ module.exports.parser = __webpack_require__(5);
  * Module dependencies.
  */
 
-var transports = __webpack_require__(22);
+var transports = __webpack_require__(23);
 var Emitter = __webpack_require__(4);
 var debug = __webpack_require__(2)('engine.io-client:socket');
-var index = __webpack_require__(25);
+var index = __webpack_require__(26);
 var parser = __webpack_require__(5);
 var parseuri = __webpack_require__(17);
 var parsejson = __webpack_require__(63);
-var parseqs = __webpack_require__(7);
+var parseqs = __webpack_require__(8);
 
 /**
  * Module exports.
@@ -9958,7 +10043,7 @@ Socket.protocol = parser.protocol; // this is an int
 
 Socket.Socket = Socket;
 Socket.Transport = __webpack_require__(15);
-Socket.transports = __webpack_require__(22);
+Socket.transports = __webpack_require__(23);
 Socket.parser = __webpack_require__(5);
 
 /**
@@ -10592,9 +10677,9 @@ try {
  */
 
 var XMLHttpRequest = __webpack_require__(14);
-var Polling = __webpack_require__(23);
+var Polling = __webpack_require__(24);
 var Emitter = __webpack_require__(4);
-var inherit = __webpack_require__(8);
+var inherit = __webpack_require__(9);
 var debug = __webpack_require__(2)('engine.io-client:polling-xhr');
 
 /**
@@ -11571,8 +11656,8 @@ module.exports = (function() {
  * Module requirements.
  */
 
-var Polling = __webpack_require__(23);
-var inherit = __webpack_require__(8);
+var Polling = __webpack_require__(24);
+var inherit = __webpack_require__(9);
 
 /**
  * Module exports.
@@ -11810,9 +11895,9 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 
 var Transport = __webpack_require__(15);
 var parser = __webpack_require__(5);
-var parseqs = __webpack_require__(7);
-var inherit = __webpack_require__(8);
-var yeast = __webpack_require__(24);
+var parseqs = __webpack_require__(8);
+var inherit = __webpack_require__(9);
+var yeast = __webpack_require__(25);
 var debug = __webpack_require__(2)('engine.io-client:websocket');
 var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 var NodeWebSocket;
@@ -12673,6 +12758,74 @@ module.exports = function (encodedURI) {
 
 /***/ }),
 /* 70 */
+/***/ (function(module, exports) {
+
+module.exports = {
+	"name": "skyway-js",
+	"version": "1.1.9",
+	"description": "The official JavaScript SDK for SkyWay",
+	"main": "dist/skyway.js",
+	"module": "src/peer.js",
+	"scripts": {
+		"test": "karma start ./karma.conf.js",
+		"clean": "del ./dist",
+		"lint": "eslint .",
+		"build": "NODE_ENV=production webpack",
+		"dev": "webpack -w",
+		"doc": "jsdoc -c ./jsdoc.config.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/skyway/skyway-js-sdk"
+	},
+	"files": [
+		"dist/skyway.js",
+		"LICENSE",
+		"CHANGELOG.md",
+		"README.md"
+	],
+	"author": "NTT Communications Corp.",
+	"license": "MIT",
+	"devDependencies": {
+		"babel-loader": "^7.1.1",
+		"babel-plugin-espower": "^2.1.1",
+		"babel-preset-es2015": "^6.3.13",
+		"del-cli": "^1.1.0",
+		"eslint": "^4.2.0",
+		"inject-loader": "^3.0.1",
+		"istanbul": "^0.4.5",
+		"eslint-config-prettier": "^2.9.0",
+		"eslint-plugin-prettier": "^2.4.0",
+		"istanbul-instrumenter-loader": "^3.0.0",
+		"jsdoc": "^3.5.3",
+		"karma": "^2.0.0",
+		"karma-chrome-launcher": "^2.2.0",
+		"karma-coverage": "^1.1.1",
+		"karma-mocha": "^1.3.0",
+		"karma-mocha-reporter": "^2.2.5",
+		"karma-sourcemap-loader": "^0.3.7",
+		"karma-webpack": "^2.0.9",
+		"mocha": "^4.1.0",
+		"power-assert": "^1.4.4",
+		"prettier": "^1.9.2",
+		"sinon": "^4.1.4",
+		"webpack": "^3.3.0"
+	},
+	"dependencies": {
+		"detect-browser": "^2.1.0",
+		"enum": "git+https://github.com/eastandwest/enum.git#react-native",
+		"events": "^1.1.0",
+		"js-binarypack": "0.0.9",
+		"object-sizeof": "^1.0.10",
+		"query-string": "^5.0.0",
+		"sdp-interop": "^0.1.11",
+		"sdp-transform": "^2.3.0",
+		"socket.io-client": "^2.0.3"
+	}
+};
+
+/***/ }),
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var toIntIfInt = function (v) {
@@ -12711,7 +12864,7 @@ var parseReg = function (obj, location, content) {
   }
 };
 
-var grammar = __webpack_require__(31);
+var grammar = __webpack_require__(32);
 var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
 
 exports.parse = function (sdp) {
@@ -12800,10 +12953,10 @@ exports.parseSimulcastStreamList = function (str) {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var grammar = __webpack_require__(31);
+var grammar = __webpack_require__(32);
 
 // customized util.format - discards excess arguments and can void middle ones
 var formatRegExp = /%[sdv%]/g;
@@ -12920,7 +13073,7 @@ module.exports = function (session, opts) {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright @ 2015 Atlassian Pty Ltd
@@ -12938,11 +13091,11 @@ module.exports = function (session, opts) {
  * limitations under the License.
  */
 
-exports.Interop = __webpack_require__(73);
+exports.Interop = __webpack_require__(74);
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12966,8 +13119,8 @@ exports.Interop = __webpack_require__(73);
 /* jshint -W097 */
 
 
-var transform = __webpack_require__(74);
-var arrayEquals = __webpack_require__(75);
+var transform = __webpack_require__(75);
+var arrayEquals = __webpack_require__(76);
 
 function Interop() {
 
@@ -13713,7 +13866,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright @ 2015 Atlassian Pty Ltd
@@ -13731,7 +13884,7 @@ Interop.prototype.toUnifiedPlan = function(desc) {
  * limitations under the License.
  */
 
-var transform = __webpack_require__(30);
+var transform = __webpack_require__(31);
 
 exports.write = function(session, opts) {
 
@@ -13831,7 +13984,7 @@ exports.parse = function(sdp) {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports) {
 
 /* Copyright @ 2015 Atlassian Pty Ltd
@@ -13876,11 +14029,241 @@ module.exports = function arrayEquals(array) {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var BufferBuilder = __webpack_require__(33).BufferBuilder;
-var binaryFeatures = __webpack_require__(33).binaryFeatures;
+/* WEBPACK VAR INJECTION */(function(process) {/**
+  # detect-browser
+
+  This is a package that attempts to detect a browser vendor and version (in
+  a semver compatible format) using a navigator useragent in a browser or
+  `process.version` in node.
+
+  ## NOTE: Version 2.x release
+
+  Release 2.0 introduces a breaking API change (hence the major release)
+  which requires invocation of a `detect` function rather than just inclusion of
+  the module.  PR [#46](https://github.com/DamonOehlman/detect-browser/pull/46)
+  provides more context as to why this change has been made.
+
+  ## Example Usage
+
+  <<< examples/simple.js
+
+  Or you can use a switch statement:
+
+  <<< examples/switch.js
+
+  ## Adding additional browser support
+
+  The current list of browsers that can be detected by `detect-browser` is
+  not exhaustive. If you have a browser that you would like to add support for
+  then please submit a pull request with the implementation.
+
+  Creating an acceptable implementation requires two things:
+
+  1. A test demonstrating that the regular expression you have defined identifies
+     your new browser correctly.  Examples of this can be found in the
+     `test/logic.js` file.
+
+  2. Write the actual regex to the `lib/detectBrowser.js` file. In most cases adding
+     the regex to the list of existing regexes will be suitable (if usage of `detect-brower`
+     returns `undefined` for instance), but in some cases you might have to add it before
+     an existing regex.  This would be true for a case where you have a browser that
+     is a specialised variant of an existing browser but is identified as the
+     non-specialised case.
+
+  When writing the regular expression remember that you would write it containing a
+  single [capturing group](https://regexone.com/lesson/capturing_groups) which
+  captures the version number of the browser.
+
+**/
+
+function detect() {
+  var nodeVersion = getNodeVersion();
+  if (nodeVersion) {
+    return nodeVersion;
+  } else if (typeof navigator !== 'undefined') {
+    return parseUserAgent(navigator.userAgent);
+  }
+
+  return null;
+}
+
+function detectOS(userAgentString) {
+  var rules = getOperatingSystemRules();
+  var detected = rules.filter(function (os) {
+    return os.rule && os.rule.test(userAgentString);
+  })[0];
+
+  return detected ? detected.name : null;
+}
+
+function getNodeVersion() {
+  var isNode = typeof navigator === 'undefined' && typeof process !== 'undefined';
+  return isNode ? {
+    name: 'node',
+    version: process.version.slice(1),
+    os: __webpack_require__(78).type().toLowerCase()
+  } : null;
+}
+
+function parseUserAgent(userAgentString) {
+  var browsers = getBrowserRules();
+  if (!userAgentString) {
+    return null;
+  }
+
+  var detected = browsers.map(function(browser) {
+    var match = browser.rule.exec(userAgentString);
+    var version = match && match[1].split(/[._]/).slice(0,3);
+
+    if (version && version.length < 3) {
+      version = version.concat(version.length == 1 ? [0, 0] : [0]);
+    }
+
+    return match && {
+      name: browser.name,
+      version: version.join('.')
+    };
+  }).filter(Boolean)[0] || null;
+
+  if (detected) {
+    detected.os = detectOS(userAgentString);
+  }
+
+  return detected;
+}
+
+function getBrowserRules() {
+  return buildRules([
+    [ 'aol', /AOLShield\/([0-9\._]+)/ ],
+    [ 'edge', /Edge\/([0-9\._]+)/ ],
+    [ 'yandexbrowser', /YaBrowser\/([0-9\._]+)/ ],
+    [ 'vivaldi', /Vivaldi\/([0-9\.]+)/ ],
+    [ 'kakaotalk', /KAKAOTALK\s([0-9\.]+)/ ],
+    [ 'chrome', /(?!Chrom.*OPR)Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/ ],
+    [ 'phantomjs', /PhantomJS\/([0-9\.]+)(:?\s|$)/ ],
+    [ 'crios', /CriOS\/([0-9\.]+)(:?\s|$)/ ],
+    [ 'firefox', /Firefox\/([0-9\.]+)(?:\s|$)/ ],
+    [ 'fxios', /FxiOS\/([0-9\.]+)/ ],
+    [ 'opera', /Opera\/([0-9\.]+)(?:\s|$)/ ],
+    [ 'opera', /OPR\/([0-9\.]+)(:?\s|$)$/ ],
+    [ 'ie', /Trident\/7\.0.*rv\:([0-9\.]+).*\).*Gecko$/ ],
+    [ 'ie', /MSIE\s([0-9\.]+);.*Trident\/[4-7].0/ ],
+    [ 'ie', /MSIE\s(7\.0)/ ],
+    [ 'bb10', /BB10;\sTouch.*Version\/([0-9\.]+)/ ],
+    [ 'android', /Android\s([0-9\.]+)/ ],
+    [ 'ios', /Version\/([0-9\._]+).*Mobile.*Safari.*/ ],
+    [ 'safari', /Version\/([0-9\._]+).*Safari/ ]
+  ]);
+}
+
+function getOperatingSystemRules() {
+  return buildRules([
+    [ 'iOS', /iP(hone|od|ad)/ ],
+    [ 'Android OS', /Android/ ],
+    [ 'BlackBerry OS', /BlackBerry|BB10/ ],
+    [ 'Windows Mobile', /IEMobile/ ],
+    [ 'Amazon OS', /Kindle/ ],
+    [ 'Windows 3.11', /Win16/ ],
+    [ 'Windows 95', /(Windows 95)|(Win95)|(Windows_95)/ ],
+    [ 'Windows 98', /(Windows 98)|(Win98)/ ],
+    [ 'Windows 2000', /(Windows NT 5.0)|(Windows 2000)/ ],
+    [ 'Windows XP', /(Windows NT 5.1)|(Windows XP)/ ],
+    [ 'Windows Server 2003', /(Windows NT 5.2)/ ],
+    [ 'Windows Vista', /(Windows NT 6.0)/ ],
+    [ 'Windows 7', /(Windows NT 6.1)/ ],
+    [ 'Windows 8', /(Windows NT 6.2)/ ],
+    [ 'Windows 8.1', /(Windows NT 6.3)/ ],
+    [ 'Windows 10', /(Windows NT 10.0)/ ],
+    [ 'Windows ME', /Windows ME/ ],
+    [ 'Open BSD', /OpenBSD/ ],
+    [ 'Sun OS', /SunOS/ ],
+    [ 'Linux', /(Linux)|(X11)/ ],
+    [ 'Mac OS', /(Mac_PowerPC)|(Macintosh)/ ],
+    [ 'QNX', /QNX/ ],
+    [ 'BeOS', /BeOS/ ],
+    [ 'OS/2', /OS\/2/ ],
+    [ 'Search Bot', /(nuhk)|(Googlebot)|(Yammybot)|(Openbot)|(Slurp)|(MSNBot)|(Ask Jeeves\/Teoma)|(ia_archiver)/ ]
+  ]);
+}
+
+function buildRules(ruleTuples) {
+  return ruleTuples.map(function(tuple) {
+    return {
+      name: tuple[0],
+      rule: tuple[1]
+    };
+  });
+}
+
+module.exports = {
+  detect: detect,
+  detectOS: detectOS,
+  getNodeVersion: getNodeVersion,
+  parseUserAgent: parseUserAgent
+};
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)))
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports) {
+
+exports.endianness = function () { return 'LE' };
+
+exports.hostname = function () {
+    if (typeof location !== 'undefined') {
+        return location.hostname
+    }
+    else return '';
+};
+
+exports.loadavg = function () { return [] };
+
+exports.uptime = function () { return 0 };
+
+exports.freemem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.totalmem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.cpus = function () { return [] };
+
+exports.type = function () { return 'Browser' };
+
+exports.release = function () {
+    if (typeof navigator !== 'undefined') {
+        return navigator.appVersion;
+    }
+    return '';
+};
+
+exports.networkInterfaces
+= exports.getNetworkInterfaces
+= function () { return {} };
+
+exports.arch = function () { return 'javascript' };
+
+exports.platform = function () { return 'browser' };
+
+exports.tmpdir = exports.tmpDir = function () {
+    return '/tmp';
+};
+
+exports.EOL = '\n';
+
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var BufferBuilder = __webpack_require__(34).BufferBuilder;
+var binaryFeatures = __webpack_require__(34).binaryFeatures;
 
 var BinaryPack = {
   unpack: function(data){
@@ -14401,7 +14784,7 @@ function utf8Length(str){
 
 
 /***/ }),
-/* 77 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14409,8 +14792,8 @@ function utf8Length(str){
 
 
 
-var ECMA_SIZES  = __webpack_require__(78);
-var Buffer = __webpack_require__(79).Buffer;
+var ECMA_SIZES  = __webpack_require__(81);
+var Buffer = __webpack_require__(82).Buffer;
 
 /**
  * Main module's entry point
@@ -14459,7 +14842,7 @@ module.exports = sizeof;
 
 
 /***/ }),
-/* 78 */
+/* 81 */
 /***/ (function(module, exports) {
 
 /**
@@ -14475,7 +14858,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 79 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14489,9 +14872,9 @@ module.exports = {
 
 
 
-var base64 = __webpack_require__(80)
-var ieee754 = __webpack_require__(81)
-var isArray = __webpack_require__(82)
+var base64 = __webpack_require__(83)
+var ieee754 = __webpack_require__(84)
+var isArray = __webpack_require__(85)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -16272,7 +16655,7 @@ function isnan (val) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 80 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16393,7 +16776,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 81 */
+/* 84 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -16483,7 +16866,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 82 */
+/* 85 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -16494,7 +16877,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 83 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16510,11 +16893,11 @@ var _enum = __webpack_require__(1);
 
 var _enum2 = _interopRequireDefault(_enum);
 
-var _room = __webpack_require__(35);
+var _room = __webpack_require__(36);
 
 var _room2 = _interopRequireDefault(_room);
 
-var _negotiator = __webpack_require__(11);
+var _negotiator = __webpack_require__(12);
 
 var _negotiator2 = _interopRequireDefault(_negotiator);
 
@@ -16522,11 +16905,11 @@ var _logger = __webpack_require__(3);
 
 var _logger2 = _interopRequireDefault(_logger);
 
-var _sdpUtil = __webpack_require__(29);
+var _sdpUtil = __webpack_require__(30);
 
 var _sdpUtil2 = _interopRequireDefault(_sdpUtil);
 
-var _util = __webpack_require__(12);
+var _util = __webpack_require__(7);
 
 var _util2 = _interopRequireDefault(_util);
 
@@ -16617,7 +17000,8 @@ var SFURoom = function (_Room) {
 
       // Chrome and Safari can't handle unified plan messages so convert it to Plan B
       // We don't need to convert the answer back to Unified Plan because the server can handle Plan B
-      if (_util2.default.detectBrowser() !== 'firefox') {
+      var browserInfo = _util2.default.detectBrowser();
+      if (browserInfo.name !== 'firefox') {
         offer = _sdpUtil2.default.unifiedToPlanB(offer);
       }
 
@@ -16911,7 +17295,7 @@ var SFURoom = function (_Room) {
 exports.default = SFURoom;
 
 /***/ }),
-/* 84 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16927,19 +17311,19 @@ var _enum = __webpack_require__(1);
 
 var _enum2 = _interopRequireDefault(_enum);
 
-var _room = __webpack_require__(35);
+var _room = __webpack_require__(36);
 
 var _room2 = _interopRequireDefault(_room);
 
-var _connection = __webpack_require__(10);
+var _connection = __webpack_require__(11);
 
 var _connection2 = _interopRequireDefault(_connection);
 
-var _mediaConnection = __webpack_require__(34);
+var _mediaConnection = __webpack_require__(35);
 
 var _mediaConnection2 = _interopRequireDefault(_mediaConnection);
 
-var _dataConnection = __webpack_require__(32);
+var _dataConnection = __webpack_require__(33);
 
 var _dataConnection2 = _interopRequireDefault(_dataConnection);
 
